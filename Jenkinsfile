@@ -2,9 +2,16 @@ pipeline {
     agent any
     
     stages {
-        stage('Check and Install Make') {
+        stage('Install Docker Plugin') {
             steps {
-                sh 'make --version >/dev/null 2>&1 || (apt-get update && apt-get install -y make)'
+                script {
+                    // Instalar el plugin de Docker
+                    def dockerPlugin = Jenkins.instance.getPlugin('docker-plugin')
+                    if (!dockerPlugin) {
+                        Jenkins.instance.updateCenter.install('docker-plugin')
+                        Jenkins.instance.restart()
+                    }
+                }
             }
         }
         
