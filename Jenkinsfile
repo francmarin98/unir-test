@@ -8,7 +8,7 @@ pipeline {
                 script {
                     def makeInstalled = sh(returnStatus: true, script: 'make --version >/dev/null 2>&1')
                     if (makeInstalled != 0) {
-                        sh 'sudo apt-get update && apt-get install -y make'
+                        sh 'apt-get update && apt-get install -y make'
                     }
                 }
             }
