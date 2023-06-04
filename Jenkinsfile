@@ -39,7 +39,7 @@ pipeline {
             
             emailext body: 'Test Message',
                     subject: 'Test Subject',
-                    to: 'test@example.com'
+                    to: 'francmarin98@gmail.com'
             echo "Email Notification!"
             echo "${currentBuild.currentResult}: Job ${env.JOB_NAME}\nBuild Number: ${env.BUILD_NUMBER}\nMore Info can be found here: ${env.BUILD_URL}"
             
@@ -48,7 +48,7 @@ pipeline {
         failure {
             emailext body: 'Test Message',
                     subject: 'Test Subject',
-                    to: 'test@example.com'
+                    to: 'francmarin98@gmail.com'
             echo "Email Notification!"
             echo "${currentBuild.currentResult}: Job ${env.JOB_NAME}\nBuild Number: ${env.BUILD_NUMBER}\nMore Info can be found here: ${env.BUILD_URL}"
         }
