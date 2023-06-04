@@ -25,7 +25,7 @@ def add(op_1, op_2):
 
 
 @api_application.route("/calc/substract/<op_1>/<op_2>", methods=["GET"])
-def subtract(op_1, op_2):
+def substract(op_1, op_2):
     try:
         num_1, num_2 = util.convert_to_number(op_1), util.convert_to_number(op_2)
         return ("{}".format(CALCULATOR.substract(num_1, num_2)), http.client.OK, HEADERS)
@@ -40,16 +40,7 @@ def multiply(op_1, op_2):
         return ("{}".format(CALCULATOR.multiply(num_1, num_2)), http.client.OK, HEADERS)
     except TypeError as e:
         return (str(e), http.client.BAD_REQUEST, HEADERS)
-    
 
-@api_application.route("/calc/power/<op_1>/<op_2>", methods=["GET"])
-def power(op_1, op_2):
-    try:
-        num_1, num_2 = util.convert_to_number(op_1), util.convert_to_number(op_2)
-        return ("{}".format(CALCULATOR.power(num_1, num_2)), http.client.OK, HEADERS)
-    except TypeError as e:
-        return (str(e), http.client.BAD_REQUEST, HEADERS)
-    
 
 @api_application.route("/calc/divide/<op_1>/<op_2>", methods=["GET"])
 def divide(op_1, op_2):
@@ -58,25 +49,30 @@ def divide(op_1, op_2):
         return ("{}".format(CALCULATOR.divide(num_1, num_2)), http.client.OK, HEADERS)
     except TypeError as e:
         return (str(e), http.client.BAD_REQUEST, HEADERS)
-    
 
-# Added new functions
 
-## Function to calculate the square root of a number
-@api_application.route("/calc/sqrt/<op_1>", methods=["GET"])
-def sqrt(op_1):
+@api_application.route("/calc/power/<op_1>/<op_2>", methods=["GET"])
+def power(op_1, op_2):
     try:
-        num_1 = util.convert_to_number(op_1)
-        return ("{}".format(CALCULATOR.sqrt(num_1)), http.client.OK, HEADERS)
+        num_1, num_2 = util.convert_to_number(op_1), util.convert_to_number(op_2)
+        return ("{}".format(CALCULATOR.substract(num_1, num_2)), http.client.OK, HEADERS)
     except TypeError as e:
         return (str(e), http.client.BAD_REQUEST, HEADERS)
 
 
-## Function to calculate the logarithm of a number
-@api_application.route("/calc/log/<op_1>", methods=["GET"])
-def log(op_1):
+@api_application.route("/calc/square-root/<op_1>", methods=["GET"])
+def square_root(op_1):
     try:
         num_1 = util.convert_to_number(op_1)
-        return ("{}".format(CALCULATOR.log(num_1)), http.client.OK, HEADERS)
+        return ("{}".format(CALCULATOR.square(num_1)), http.client.OK, HEADERS)
+    except TypeError as e:
+        return (str(e), http.client.BAD_REQUEST, HEADERS)
+
+
+@api_application.route("/calc/common-logarithm/<op_1>", methods=["GET"])
+def common_logarithm(op_1):
+    try:
+        num_1 = util.convert_to_number(op_1)
+        return ("{}".format(CALCULATOR.common_logarithm(num_1)), http.client.OK, HEADERS)
     except TypeError as e:
         return (str(e), http.client.BAD_REQUEST, HEADERS)
