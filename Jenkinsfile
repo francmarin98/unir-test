@@ -3,6 +3,16 @@ pipeline {
         label 'docker'
     }
     stages {
+        stage('Check and Install Make') {
+            steps {
+                script {
+                    def makeInstalled = sh(returnStatus: true, script: 'make --version >/dev/null 2>&1')
+                    if (makeInstalled != 0) {
+                        sh 'sudo apt-get update && apt-get install -y make'
+                    }
+                }
+            }
+        }
         stage('Source') {
             steps {
                 git 'https://github.com/francmarin98/unir-test.git'
