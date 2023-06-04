@@ -13,7 +13,15 @@ pipeline {
                 git 'https://github.com/francmarin98/unir-test.git'
             }
         }
-
+        
+        stage('Install Docker') {
+            steps {
+                sh 'curl -fsSL https://get.docker.com -o get-docker.sh'
+                sh 'sh get-docker.sh'
+                sh 'sudo usermod -aG docker jenkins'
+            }
+        }
+        
         stage('Unit tests') {
             steps {
                 echo 'Unit tests!'
