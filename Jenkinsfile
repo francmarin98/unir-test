@@ -2,33 +2,12 @@ pipeline {
     agent any
     
     stages {
-        stage('Install Docker Plugin') {
-            steps {
-                script {
-                    // Instalar el plugin de Docker
-                    def dockerPlugin = Jenkins.instance.getPlugin('docker-plugin')
-                    if (!dockerPlugin) {
-                        Jenkins.instance.updateCenter.install('docker-plugin')
-                        Jenkins.instance.restart()
-                    }
-                }
-            }
-        }
-        
         stage('Source') {
             steps {
                 git 'https://github.com/francmarin98/unir-test.git'
             }
         }
-        
-        stage('Install Docker') {
-            steps {
-                sh 'curl -fsSL https://get.docker.com -o get-docker.sh'
-                sh 'sh get-docker.sh'
-                sh 'sudo usermod -aG docker jenkins'
-            }
-        }
-        
+                
         stage('Unit tests') {
             steps {
                 echo 'Unit tests!'
