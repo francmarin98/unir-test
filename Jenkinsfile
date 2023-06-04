@@ -3,13 +3,11 @@ pipeline {
         label 'docker'
     }
     stages {
-        stage('Check and Install Make') {
+        stage('Setup') {
             steps {
                 script {
-                    def makeInstalled = sh(returnStatus: true, script: 'make --version >/dev/null 2>&1')
-                    if (makeInstalled != 0) {
-                        sh 'apt-get update && apt-get install -y make'
-                    }
+                    // Ingresar al contenedor como superusuario
+                    sh 'docker exec -u 0 -it jenkins bash -c "apt-get update && apt-get install -y make"'
                 }
             }
         }
