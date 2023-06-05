@@ -47,13 +47,13 @@ pipeline {
                         {
                             \"to\": [
                                 {
-                                    \"email\": \"francmarin98@gmail.com\"
+                                    \"email\": \"francmarinc@gmail.com\"
                                 }
                             ]
                         }
                     ],
                     \"from\": {
-                        \"email\": \"your-email@example.com\"
+                        \"email\": \"francmarin98@gmail.com\"
                     },
                     \"subject\": \"Test Subject - Build ${env.BUILD_NUMBER} ${currentBuild.currentResult}\",
                     \"content\": [
@@ -76,13 +76,13 @@ pipeline {
                         {
                             \"to\": [
                                 {
-                                    \"email\": \"francmarin98@gmail.com\"
+                                    \"email\": \"francmarinc@gmail.com\"
                                 }
                             ]
                         }
                     ],
                     \"from\": {
-                        \"email\": \"your-email@example.com\"
+                        \"email\": \"francmarin98@gmail.com\"
                     },
                     \"subject\": \"Build ${env.BUILD_NUMBER} Failed - ${env.JOB_NAME}\",
                     \"content\": [
