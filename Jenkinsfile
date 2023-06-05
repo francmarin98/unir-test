@@ -1,4 +1,3 @@
-/* groovylint-disable CompileStatic, DuplicateStringLiteral, LineLength */
 pipeline {
     agent any
 
@@ -39,59 +38,70 @@ pipeline {
     post {
         always {
             junit 'results/*_result.xml'
-            sh """curl -X POST https://api.sendgrid.com/v3/mail/send \
-                -H 'Content-Type: application/json' \
-                -H 'Authorization: Bearer ${SENDGRID_API_KEY}' \
-                -d '{
-                    \"personalizations\": [
-                        {
-                            \"to\": [
-                                {
-                                    \"email\": \"${TO_EMAIL}\"
-                                }
-                            ]
-                        }
-                    ],
-                    \"from\": {
-                        \"email\": \"${FROM_EMAIL}\"
-                    },
-                    \"subject\": \"Subject - Build ${env.BUILD_NUMBER} ${currentBuild.currentResult}\",
-                    \"content\": [
-                        {
-                            \"type\": \"text/plain\",
-                            \"value\": \"La ejecución del pipeline fue exitosa\"
-                        }
-                    ]
-                }'"""
+            withCredentials([string(credentialsId: 'toEmail', variable: 'TO_EMAIL'),
+                             string(credentialsId: 'fromEmail', variable: 'FROM_EMAIL'),
+                             string(credentialsId: 'sendgridApiKey', variable: 'SENDGRID_API_KEY')]) {
+                sh """curl -X POST https://api.sendgrid.com/v3/mail/send \
+                    -H 'Content-Type: application/json' \
+                    -H 'Authorization: Bearer $SENDGRID_API_KEY' \
+                    -d '{
+                        \"personalizations\": [
+                            {
+                                \"to\": [
+                                    {
+                                        \"email\": \"$TO_EMAIL\"
+                                    }
+                                ]
+                            }
+                        ],
+                        \"from\": {
+                            \"email\": \"$FROM_EMAIL\"
+                        },
+                        \"subject\": \"Subject - Build ${env.BUILD_NUMBER} ${currentBuild.currentResult}\",
+                        \"content\": [
+                            {
+                                \"type\": \"text/plain\",
+                                \"value\": \"La ejecución del pipeline fue exitosa\"
+                            }
+                        ]
+                    }'"""
+            }
+
             echo 'Email Notification!'
             echo "${currentBuild.currentResult}: Job ${env.JOB_NAME}\nBuild Number: ${env.BUILD_NUMBER}\nMore Info can be found here: ${env.BUILD_URL}"
             cleanWs()
         }
+
         failure {
-            sh """curl -X POST https://api.sendgrid.com/v3/mail/send \
-                -H 'Content-Type: application/json' \
-                -H 'Authorization: Bearer ${SENDGRID_API_KEY}' \
-                -d '{
-                    \"personalizations\": [
-                        {
-                            \"to\": [
-                                {
-                                    \"email\": \"${TO_EMAIL}\"
-                                }
-                            ]
-                        }
-                    ],
-                    \"from\": {
-                        \"email\": \"${FROM_EMAIL}\"
-                    },
-                    \"subject\": \"Build ${env.BUILD_NUMBER} Failed - ${env.JOB_NAME}\",
-                    \"content\": [
-                        {
-                            \"type\": \"text/plain\",
-                            \"value\": \"La ejecución del pipeline fue fracasó\"
-                        }
-                    ]
-                }'"""
+            withCredentials([string(credentialsId: 'toEmail', variable: 'TO_EMAIL'),
+                             string(credentialsId: 'fromEmail', variable: 'FROM_EMAIL'),
+                             string(credentialsId: 'sendgridApiKey', variable: 'SENDGRID_API_KEY')]) {
+                sh """curl -X POST https://api.sendgrid.com/v3/mail/send \
+                    -H 'Content-Type: application/json' \
+                    -H 'Authorization: Bearer $SENDGRID_API_KEY' \
+                    -d '{
+                        \"personalizations\": [
+                            {
+                                \"to\": [
+                                    {
+                                        \"email\": \"$TO_EMAIL\"
+                                    }
+                                ]
+                            }
+                        ],
+                        \"from\": {
+                            \"email\": \"$FROM_EMAIL\"
+                        },
+                        \"subject\": \"Build ${env.BUILD_NUMBER} Failed - ${env.JOB_NAME}\",
+                        \"content\": [
+                            {
+                                \"type\": \"text/plain\",
+                                \"value\": \"La ejecución del pipeline fue fracasó\"
+                            }
+                        ]
+                    }'"""
+            }
+
             echo 'Email Notification!'
             echo "${currentBuild.currentResult}: Job ${env.JOB_NAME}\nBuild Number: ${env.BUILD_NUMBER}\nMore Info can be found here: ${env.BUILD_URL}"
         }
