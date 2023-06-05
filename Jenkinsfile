@@ -38,20 +38,63 @@ pipeline {
     
     post {
         always {
-            junit 'results/*_result.xml'
-            emailext body: 'Test Message',
-                    subject: 'Test Subject',
-                    to: 'francmarin98@gmail.com'
-            echo "Email Notification!"
-            echo "${currentBuild.currentResult}: Job ${env.JOB_NAME}\nBuild Number: ${env.BUILD_NUMBER}\nMore Info can be found here: ${env.BUILD_URL}"
-            cleanWs()
-        }
-        failure {
-            emailext body: 'Test Message',
-                    subject: 'Test Subject',
-                    to: 'francmarin98@gmail.com'
-            echo "Email Notification!"
-            echo "${currentBuild.currentResult}: Job ${env.JOB_NAME}\nBuild Number: ${env.BUILD_NUMBER}\nMore Info can be found here: ${env.BUILD_URL}"
-        }
+        junit 'results/*_result.xml'
+        sh 'curl -X POST https://api.sendgrid.com/v3/mail/send \
+          -H "Content-Type: application/json" \
+          -H "Authorization: Bearer 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" \
+          -d \'{
+            "personalizations": [
+              {
+                "to": [
+                  {
+                    "email": "francmarin98@gmail.com"
+                  }
+                ]
+              }
+            ],
+            "from": {
+              "email": "your-email@example.com"
+            },
+            "subject": "Test Subject",
+            "content": [
+              {
+                "type": "text/plain",
+                "value": "Test Message"
+              }
+            ]
+          }\''
+        echo "Email Notification!"
+        echo "${currentBuild.currentResult}: Job ${env.JOB_NAME}\nBuild Number: ${env.BUILD_NUMBER}\nMore Info can be found here: ${env.BUILD_URL}"
+        cleanWs()
     }
+    failure {
+        sh 'curl -X POST https://api.sendgrid.com/v3/mail/send \
+          -H "Content-Type: application/json" \
+          -H "Authorization: Bearer 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" \
+          -d \'{
+            "personalizations": [
+              {
+                "to": [
+                  {
+                    "email": "francmarin98@gmail.com"
+                  }
+                ]
+              }
+            ],
+            "from": {
+              "email": "your-email@example.com"
+            },
+            "subject": "Test Subject",
+            "content": [
+              {
+                "type": "text/plain",
+                "value": "Test Message"
+              }
+            ]
+          }\''
+        echo "Email Notification!"
+        echo "${currentBuild.currentResult}: Job ${env.JOB_NAME}\nBuild Number: ${env.BUILD_NUMBER}\nMore Info can be found here: ${env.BUILD_URL}"
+    }
+}
+
 }
