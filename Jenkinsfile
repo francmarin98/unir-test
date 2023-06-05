@@ -1,4 +1,4 @@
-/* groovylint-disable CompileStatic, LineLength */
+/* groovylint-disable CompileStatic, DuplicateStringLiteral, LineLength */
 pipeline {
     agent any
 
@@ -35,64 +35,64 @@ pipeline {
             }
         }
     }
-    
-        post {
+
+    post {
         always {
             junit 'results/*_result.xml'
             sh """curl -X POST https://api.sendgrid.com/v3/mail/send \
                 -H 'Content-Type: application/json' \
-                -H 'Authorization: Bearer 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' \
+                -H 'Authorization: Bearer ${SENDGRID_API_KEY}' \
                 -d '{
                     \"personalizations\": [
                         {
                             \"to\": [
                                 {
-                                    \"email\": \"francmarinc@gmail.com\"
+                                    \"email\": \"${TO_EMAIL}\"
                                 }
                             ]
                         }
                     ],
                     \"from\": {
-                        \"email\": \"francmarin98@gmail.com\"
+                        \"email\": \"${FROM_EMAIL}\"
                     },
-                    \"subject\": \"Test Subject - Build ${env.BUILD_NUMBER} ${currentBuild.currentResult}\",
+                    \"subject\": \"Subject - Build ${env.BUILD_NUMBER} ${currentBuild.currentResult}\",
                     \"content\": [
                         {
                             \"type\": \"text/plain\",
-                            \"value\": \"Test Message\"
+                            \"value\": \"La ejecución del pipeline fue exitosa\"
                         }
                     ]
                 }'"""
-            echo "Email Notification!"
+            echo 'Email Notification!'
             echo "${currentBuild.currentResult}: Job ${env.JOB_NAME}\nBuild Number: ${env.BUILD_NUMBER}\nMore Info can be found here: ${env.BUILD_URL}"
             cleanWs()
         }
         failure {
             sh """curl -X POST https://api.sendgrid.com/v3/mail/send \
                 -H 'Content-Type: application/json' \
-                -H 'Authorization: Bearer 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' \
+                -H 'Authorization: Bearer ${SENDGRID_API_KEY}' \
                 -d '{
                     \"personalizations\": [
                         {
                             \"to\": [
                                 {
-                                    \"email\": \"francmarinc@gmail.com\"
+                                    \"email\": \"${TO_EMAIL}\"
                                 }
                             ]
                         }
                     ],
                     \"from\": {
-                        \"email\": \"francmarin98@gmail.com\"
+                        \"email\": \"${FROM_EMAIL}\"
                     },
                     \"subject\": \"Build ${env.BUILD_NUMBER} Failed - ${env.JOB_NAME}\",
                     \"content\": [
                         {
                             \"type\": \"text/plain\",
-                            \"value\": \"Test Message\"
+                            \"value\": \"La ejecución del pipeline fue fracasó\"
                         }
                     ]
                 }'"""
-            echo "Email Notification!"
+            echo 'Email Notification!'
             echo "${currentBuild.currentResult}: Job ${env.JOB_NAME}\nBuild Number: ${env.BUILD_NUMBER}\nMore Info can be found here: ${env.BUILD_URL}"
         }
     }
