@@ -1,3 +1,4 @@
+/* groovylint-disable DuplicateMapLiteral, DuplicateStringLiteral, LineLength */
 pipeline {
     agent any
 
@@ -38,9 +39,9 @@ pipeline {
     post {
         always {
             junit 'results/*_result.xml'
-            withCredentials([string(credentialsId: 'toEmail', variable: 'TO_EMAIL'),
-                             string(credentialsId: 'fromEmail', variable: 'FROM_EMAIL'),
-                             string(credentialsId: 'sendgridApiKey', variable: 'SENDGRID_API_KEY')]) {
+            withCredentials([string(credentialsId: 'TO_EMAIL', variable: 'TO_EMAIL'),
+                             string(credentialsId: 'FROM_EMAIL', variable: 'FROM_EMAIL'),
+                             string(credentialsId: 'SENDGRID_API_KEY', variable: 'SENDGRID_API_KEY')]) {
                 sh """curl -X POST https://api.sendgrid.com/v3/mail/send \
                     -H 'Content-Type: application/json' \
                     -H 'Authorization: Bearer $SENDGRID_API_KEY' \
@@ -73,9 +74,9 @@ pipeline {
         }
 
         failure {
-            withCredentials([string(credentialsId: 'toEmail', variable: 'TO_EMAIL'),
-                             string(credentialsId: 'fromEmail', variable: 'FROM_EMAIL'),
-                             string(credentialsId: 'sendgridApiKey', variable: 'SENDGRID_API_KEY')]) {
+            withCredentials([string(credentialsId: 'TO_EMAIL', variable: 'TO_EMAIL'),
+                             string(credentialsId: 'FROM_EMAIL', variable: 'FROM_EMAIL'),
+                             string(credentialsId: 'SENDGRID_API_KEY', variable: 'SENDGRID_API_KEY')]) {
                 sh """curl -X POST https://api.sendgrid.com/v3/mail/send \
                     -H 'Content-Type: application/json' \
                     -H 'Authorization: Bearer $SENDGRID_API_KEY' \
