@@ -1,13 +1,13 @@
+/* groovylint-disable CompileStatic, LineLength */
 pipeline {
     agent any
-    
+
     stages {
         stage('Source') {
             steps {
                 git 'https://github.com/francmarin98/unir-test.git'
             }
         }
-                
         stage('Unit tests') {
             steps {
                 echo 'Unit tests!'
@@ -36,65 +36,64 @@ pipeline {
         }
     }
     
-    post {
+        post {
         always {
-        junit 'results/*_result.xml'
-        sh 'curl -X POST https://api.sendgrid.com/v3/mail/send \
-          -H "Content-Type: application/json" \
-          -H "Authorization: Bearer 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" \
-          -d \'{
-            "personalizations": [
-              {
-                "to": [
-                  {
-                    "email": "francmarin98@gmail.com"
-                  }
-                ]
-              }
-            ],
-            "from": {
-              "email": "your-email@example.com"
-            },
-            "subject": "Test Subject",
-            "content": [
-              {
-                "type": "text/plain",
-                "value": "Test Message"
-              }
-            ]
-          }\''
-        echo "Email Notification!"
-        echo "${currentBuild.currentResult}: Job ${env.JOB_NAME}\nBuild Number: ${env.BUILD_NUMBER}\nMore Info can be found here: ${env.BUILD_URL}"
-        cleanWs()
+            junit 'results/*_result.xml'
+            sh """curl -X POST https://api.sendgrid.com/v3/mail/send \
+                -H 'Content-Type: application/json' \
+                -H 'Authorization: Bearer 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' \
+                -d '{
+                    \"personalizations\": [
+                        {
+                            \"to\": [
+                                {
+                                    \"email\": \"francmarin98@gmail.com\"
+                                }
+                            ]
+                        }
+                    ],
+                    \"from\": {
+                        \"email\": \"your-email@example.com\"
+                    },
+                    \"subject\": \"Test Subject - Build ${env.BUILD_NUMBER} ${currentBuild.currentResult}\",
+                    \"content\": [
+                        {
+                            \"type\": \"text/plain\",
+                            \"value\": \"Test Message\"
+                        }
+                    ]
+                }'"""
+            echo "Email Notification!"
+            echo "${currentBuild.currentResult}: Job ${env.JOB_NAME}\nBuild Number: ${env.BUILD_NUMBER}\nMore Info can be found here: ${env.BUILD_URL}"
+            cleanWs()
+        }
+        failure {
+            sh """curl -X POST https://api.sendgrid.com/v3/mail/send \
+                -H 'Content-Type: application/json' \
+                -H 'Authorization: Bearer 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' \
+                -d '{
+                    \"personalizations\": [
+                        {
+                            \"to\": [
+                                {
+                                    \"email\": \"francmarin98@gmail.com\"
+                                }
+                            ]
+                        }
+                    ],
+                    \"from\": {
+                        \"email\": \"your-email@example.com\"
+                    },
+                    \"subject\": \"Build ${env.BUILD_NUMBER} Failed - ${env.JOB_NAME}\",
+                    \"content\": [
+                        {
+                            \"type\": \"text/plain\",
+                            \"value\": \"Test Message\"
+                        }
+                    ]
+                }'"""
+            echo "Email Notification!"
+            echo "${currentBuild.currentResult}: Job ${env.JOB_NAME}\nBuild Number: ${env.BUILD_NUMBER}\nMore Info can be found here: ${env.BUILD_URL}"
+        }
     }
-    failure {
-        sh 'curl -X POST https://api.sendgrid.com/v3/mail/send \
-          -H "Content-Type: application/json" \
-          -H "Authorization: Bearer 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" \
-          -d \'{
-            "personalizations": [
-              {
-                "to": [
-                  {
-                    "email": "francmarin98@gmail.com"
-                  }
-                ]
-              }
-            ],
-            "from": {
-              "email": "your-email@example.com"
-            },
-            "subject": "Test Subject",
-            "content": [
-              {
-                "type": "text/plain",
-                "value": "Test Message"
-              }
-            ]
-          }\''
-        echo "Email Notification!"
-        echo "${currentBuild.currentResult}: Job ${env.JOB_NAME}\nBuild Number: ${env.BUILD_NUMBER}\nMore Info can be found here: ${env.BUILD_URL}"
-    }
-}
-
 }
